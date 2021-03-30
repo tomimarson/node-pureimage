@@ -2,6 +2,7 @@ import chai, {expect} from "chai"
 import * as pureimage from "../src/index.js"
 import fs from "fs"
 import path from "path"
+import {write_png} from './common.js'
 const DIR = "output"
 const mkdir = (pth) => {
     return new Promise((res,rej)=>{
@@ -60,7 +61,7 @@ describe('draw curve',() => {
     })
 
     //draw bezier curve
-    it('bezier curve', (done) => {
+    it('fills a bezier curve', (done) => {
         c.fillStyle = 'white'
         c.fillRect(0,0,200,200)
 
@@ -70,16 +71,29 @@ describe('draw curve',() => {
         c.bezierCurveTo(50,50, 100,50, 10,100)
         c.lineTo(10,10)
         c.fill()
-        pureimage.encodePNGToStream(image, fs.createWriteStream(path.join(DIR,'bezier1.png'))).then(() => {
-            console.log('wrote out bezier1.png')
+        write_png(image, 'bezier1').then(()=>{
             expect(image.getPixelRGBA(0, 0)).to.eq(WHITE)
             expect(image.getPixelRGBA(19, 39)).to.eq(BLACK)
             done()
         })
+    })
 
-        // expect(image.getPixelRGBA(0,0)).to.eq(WHITE)
-        // expect(image.getPixelRGBA(20,15)).to.eq(BLACK)
-        // done()
+    //draw bezier curve
+    it('strokes a bezier curve', (done) => {
+        c.fillStyle = 'white'
+        c.fillRect(0,0,200,200)
+
+        c.strokeStyle = 'black'
+        c.beginPath()
+        c.moveTo(10,10)
+        c.bezierCurveTo(50,50, 100,50, 10,100)
+        c.lineTo(10,10)
+        c.stroke()
+        write_png(image, 'bezier1_stroke').then(()=>{
+            // expect(image.getPixelRGBA(0, 0)).to.eq(WHITE)
+            // expect(image.getPixelRGBA(19, 39)).to.eq(BLACK)
+            done()
+        })
     })
 
     it('arc', (done) => {
@@ -114,8 +128,7 @@ describe('draw curve',() => {
                 }
             }
         }
-        pureimage.encodePNGToStream(img, fs.createWriteStream(path.join(DIR,'arc.png'))).then(()=>{
-            console.log('wrote out arc.png')
+        write_png(img,'arc').then(()=>{
             done()
         })
     })
@@ -131,8 +144,7 @@ describe('draw curve',() => {
         ctx.lineTo(20,120)
         ctx.lineTo(20,50)
         ctx.fill();
-        pureimage.encodePNGToStream(img, fs.createWriteStream(path.join(DIR,'northgoing.png'))).then(()=>{
-            console.log('wrote out northgoing.png')
+        write_png(img, 'northgoing.png').then(()=>{
             expect(img.getPixelRGBA(25, 110)).to.eq(BLACK)
             expect(img.getPixelRGBA(25, 90)).to.eq(BLACK)
             done()
@@ -152,9 +164,6 @@ describe('draw curve',() => {
         expect(image.getPixelRGBA(11,11)).to.eq(WHITE)
         expect(image.getPixelRGBA(50,50)).to.eq(WHITE)
         expect(image.getPixelRGBA(100,100)).to.eq(WHITE)
-
-
-
         done()
     })
 
