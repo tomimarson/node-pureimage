@@ -154,13 +154,20 @@ export function decodeJPEGFromBuffer(buffer) {
     return new Promise((res,rej)=>{
         try {
             let rawImageData = null
+            let rand = null
             try {
-                rawImageData = JPEG.decode(buffer);
+                rand = Math.random()
+                console.time("decode " + rand)
+                rawImageData = jpegJs.decode(buffer);
+                console.timeEnd("decode " + rand)
             } catch(err) {
                 rej(err);
                 return
             }
+            console.time("bitmap " + rand)
             const bitmap = new Bitmap(rawImageData.width, rawImageData.height,{})
+            console.timeEnd("bitmap " + rand)
+            console.time("for " + rand)
             for (let x_axis = 0; x_axis < rawImageData.width; x_axis++) {
                 for (let y_axis = 0; y_axis < rawImageData.height; y_axis++) {
                     const n = (y_axis * rawImageData.width + x_axis) * 4
@@ -172,6 +179,7 @@ export function decodeJPEGFromBuffer(buffer) {
                     );
                 }
             }
+            console.timeEnd("for " + rand)
             res(bitmap);
         } catch (e) {
             console.log(e);
