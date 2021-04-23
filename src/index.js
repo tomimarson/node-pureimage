@@ -158,7 +158,7 @@ export function decodeJPEGFromBuffer(buffer) {
             try {
                 rand = Math.random()
                 console.time("decode " + rand)
-                rawImageData = jpegJs.decode(buffer);
+                rawImageData = JPEG.decode(buffer);
                 console.timeEnd("decode " + rand)
             } catch(err) {
                 rej(err);
